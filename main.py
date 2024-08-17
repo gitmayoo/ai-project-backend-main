@@ -87,7 +87,7 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 
 @app.route('/')
 def index():
-    return "Hiii";
+    return "Hello world";
 
 @app.route("/gender")
 def gender_detection():
