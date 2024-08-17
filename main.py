@@ -91,7 +91,8 @@ def index():
 
 @app.route("/gender")
 def gender_detection():
-    image = cv2.imread("uploads/53a013b7b03234d99cb20cf346f77b88.jpg")
+    image = cv2.imread("uploads\captured-image.jpg")
+    # image= cv2.imread("WhatsApp Image 2024-08-18 at 00.35.23_352dc498.jpg")
     frameRGB = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     results = camModel(frameRGB)
     labels = results.names
@@ -206,7 +207,7 @@ def segmenter():
         output_category_mask=True
     )
 
-    image = mp.Image.create_from_file('uploads\WhatsApp Image 2024-08-10 at 14.22.17_36837c06.jpg')
+    image = mp.Image.create_from_file('WhatsApp Image 2024-08-18 at 00.35.23_352dc498.jpg')
 
     # with ImageSegmenter.create_from_options(options) as segmenter:
     segmenter = ImageSegmenter.create_from_options(options)
