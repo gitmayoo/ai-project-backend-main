@@ -10,6 +10,7 @@ import matplotlib.patches as patches
 import cv2
 import numpy as np
 import math
+from datetime import datetime
 
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
@@ -28,58 +29,9 @@ CORS(app, origins=["http://121.0.0.1:3000/"])
 
 
 
-torch.hub._validate_not_a_forked_repo=lambda a,b,c: True
+
+# torch.hub._validate_not_a_forked_repo=lambda a,b,c: True
 camModel = torch.hub.load('ultralytics/yolov5', 'custom', path='bestModel.pt', force_reload=True)
-
-# faceLimit = 2
-# faceCount = 0
-# #video stream frames
-# def gen_frames():
-#     global faceLimit
-#     global faceCount  
-#     while True:
-        
-#         success, frame = camera.read()  
-#         if not success:
-#             break
-#         else:
-#             faceCount = 0
-#             frameRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-#             results = camModel(frameRGB)
-#             for box in results.xyxy[0]:
-#                 if faceCount < faceLimit:
-#                     faceCount += 1 
-#                     if box[5] == 1:
-#                         className = "Male:"
-#                         bgr =(230, 216, 173)
-#                     elif box[5] == 0:
-#                         className = "Female:"
-#                         bgr =(203, 192, 255)
-                    
-#                     conf = math.floor(box[4] * 100)
-#                     xB = int(box[2])
-#                     xA = int(box[0])
-#                     yB = int(box[3])
-#                     yA = int(box[1])
-                        
-#                     cv2.rectangle(frame, (xA, yA), (xB, yB), (bgr), 4)
-#                     cv2.rectangle(frame, (xA, yA-50), (xA+180, yA), (bgr), -1)
-#                     cv2.putText(frame, str(conf), (xA + 130, yA-13), fontFace = cv2.FONT_HERSHEY_DUPLEX, fontScale=1.0, color=(255, 255, 255))
-#                     cv2.putText(frame, className, (xA, yA-15), fontFace = cv2.FONT_HERSHEY_DUPLEX, fontScale=1.0, color=(255, 255, 255))
-#                 else:
-#                     break
-
-#             ret, buffer = cv2.imencode('.jpg', frame)
-#             frame = buffer.tobytes()
-#             yield (b'--frame\r\n'
-#                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  
-
-
-
-
-# @app.route('/')
-# def index():
-#     return render_template('index.html')
 
 # Ensure the upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
@@ -109,9 +61,17 @@ def gender_detection():
 
 @app.route('/upload', methods=['POST']) # type: ignore
 def handle_upload():
+
+
+    user_name = request.form.get("name")
+    user_image = request.files.get("file")
+
+    print(user_image)
     # Image's desired dimension
     DESIRED_HEIGHT = 256
     DESIRED_WIDTH = 256
+
+    
 
     
     def resize_and_preview(image):
@@ -125,21 +85,39 @@ def handle_upload():
 
         return new_img
    
+    
+    
 
-    if 'file' not in request.files:
-        return "No file part"
-    file = request.files['file']
-    if file.filename == '':
-        return "No selected file"
-    if file:
-        filename = file.filename
+
+    # if 'file' not in request.files:
+    #     return "No file part"
+    # file = request.files['file']
+    # if file.filename == '':
+    #     return "No selected file"
+    # if file:
+    #     filename = file.filename
+    #     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename) # type: ignore
+    #     file.save(file_path)
+    #     img_file = cv2.imread(file_path)
+    #     resized_img = resize_and_preview(img_file)
+    #     os.remove(file_path)
+    #     cv2.imwrite(f"uploads/{file.filename}",resized_img,)
+    #     return f"File successfully resized and uploaded: {file_path}"
+    if user_image:
+        current_time = datetime.now().strftime('%Y%m%d_%H%M%S')  # Format: YYYYMMDD_HHMMSS
+        filename = f"{user_name}_{current_time}{os.path.splitext(user_image.filename)[1]}" 
+        # filename = name
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename) # type: ignore
-        file.save(file_path)
+        user_image.save(file_path)
         img_file = cv2.imread(file_path)
         resized_img = resize_and_preview(img_file)
         os.remove(file_path)
-        cv2.imwrite(f"uploads/{file.filename}",resized_img,)
+        cv2.imwrite(f"uploads/{filename}",resized_img,)
         return f"File successfully resized and uploaded: {file_path}"
+    else:
+        return jsonify("No image is uploaded")
+    
+
 
 @app.route("/color",methods=["GET"])
 def color_extractor():
