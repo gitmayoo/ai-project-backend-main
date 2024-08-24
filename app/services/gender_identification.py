@@ -1,11 +1,14 @@
+import os
 import cv2
 from flask import jsonify
 import torch
 
-camModel = torch.hub.load('ultralytics/yolov5', 'custom', path='bestModel.pt', force_reload=True)
+model_path = os.path.join(os.path.dirname(__file__), '..', "models","bestModel.pt")
 
-def gender_detection():
-    image = cv2.imread("uploads/53a013b7b03234d99cb20cf346f77b88.jpg")
+camModel = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path, force_reload=True)
+
+def gender_detection(imagePath):
+    image = cv2.imread(imagePath)
     frameRGB = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     results = camModel(frameRGB)
     labels = results.names
@@ -14,6 +17,6 @@ def gender_detection():
     # Assume the first detected class is the relevant one
     if detected_classes:
         detected_class = detected_classes[0]
-        return jsonify({'gender': detected_class})
+        return detected_class
     else:
-        return jsonify({'error': 'No face detected'})
+        return 'No face detected'

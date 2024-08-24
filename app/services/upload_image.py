@@ -3,6 +3,7 @@ import math
 import os
 import cv2
 from flask import g, jsonify, request
+from app.services.gender_identification import gender_detection
 
 from app.services.image_resizer import image_resizer
 
@@ -17,7 +18,7 @@ def handle_upload(image,name):
     user_image = image
 
     if user_image:
-        print(app.config['UPLOAD_FOLDER'])
+
         current_time = datetime.now().strftime('%Y%m%d_%H%M%S')  # Format: YYYYMMDD_HHMMSS
         filename = f"{user_name}_{current_time}{os.path.splitext(user_image.filename)[1]}" 
         print(filename)
@@ -30,12 +31,15 @@ def handle_upload(image,name):
         resized_img = image_resizer(img_file)
         os.remove(file_path)
         cv2.imwrite(file_path,resized_img)
-        g.csv_helper.append_row(name, file_path)
-        print(g.csv_helper.append_row())
+        gender = gender_detection(file_path)
+
+       
+        g.csv_helper.append_row(name, file_path,gender=gender)
+
         # print(g.csv_helper.read_row())
         
-        return f"File successfully resized and uploaded: "
+        return jsonify({"message":"Image uploaded Sucessfully","filename":filename}),200
 
 
     else:
-        return jsonify("No image is uploaded")
+        return jsonify("No image is uploaded"),400

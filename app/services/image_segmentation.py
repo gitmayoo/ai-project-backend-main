@@ -1,3 +1,4 @@
+import os
 import cv2
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
@@ -6,10 +7,30 @@ from PIL import Image as im
 import numpy as np
 
 
-def segmenter():
+
+
+
+def segmenter(filename):
+    from app import create_app
+    app = create_app()
+    to_be_segmented_part = "face"
+
+    def allowed_file(filename):
+        return '.' in filename and \
+            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
+
+
+    file_path = os.path.join(os.path.dirname(__file__), '..', "models","selfie_segmenter.tflite")
+    image_path = os.path.join(app.config['UPLOAD_FOLDER'],filename)
+    segmented_image_path = os.path.join(app.config['SEGMENTED_IMGS'],to_be_segmented_part,filename)
+    # image_path = os.path.join(app.config['UPLOAD_FOLDER'],"53a013b7b03234d99cb20cf346f77b88.jpg")
+    # segmented_image_path = os.path.join(app.config['SEGMENTED_IMGS'],to_be_segmented_part,"53a013b7b03234d99cb20cf346f77b88.jpg")
+
+
 
     # Specify the path of segmenter model
-    model_path = 'selfie_segmenter.tflite'
+    model_path =file_path
     base_options = python.BaseOptions(model_asset_path=model_path)
 
 
@@ -25,7 +46,7 @@ def segmenter():
         output_category_mask=True
     )
 
-    image = mp.Image.create_from_file('uploads\WhatsApp Image 2024-08-10 at 14.22.17_36837c06.jpg')
+    image = mp.Image.create_from_file(image_path)
 
     # with ImageSegmenter.create_from_options(options) as segmenter:
     segmenter = ImageSegmenter.create_from_options(options)
@@ -38,7 +59,7 @@ def segmenter():
         
     # Segmenting the image
         segmentation_result = segmenter.segment(image)
-        category_mask = segmentation_result.confidence_masks
+
         confidence_mask = segmentation_result.confidence_masks
         segmented_part = None
 
@@ -52,30 +73,15 @@ def segmenter():
         return segmented_part
 
         
-    confidence_mask = img_segmenter(image,"skin")
-    data = im.fromarray((confidence_mask.numpy_view() * 255).astype(np.uint8))
-    data.save("segmented.jpg")
+    confidence_mask = img_segmenter(image,to_be_segmented_part)
+    # data = im.fromarray((confidence_mask.numpy_view() * 255).astype(np.uint8))
+    # data.save("segmented.jpg")
 
     # Choosing between the value of 0.5 and 0.7
     # .7 for more accuracy
     threshold = 0.5
 
     binary_mask = (confidence_mask.numpy_view() > threshold).astype(np.uint8) * 255
-
-
-    # Find contours in the binary mask
-    contours, _ = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-
-    mask = np.zeros_like(image.numpy_view().copy())
-    image_with_contours = image.numpy_view().copy()
-
-    # Find the largest contour
-    largest_contour = max(contours, key=cv2.contourArea)
-
-    # Draw the largest contour on the image
-    # cv2.drawContours(mask, contours, -1, (255, 255, 255), 2)
-    cv2.drawContours(image_with_contours, contours, -1, (0, 255, 0), 2)
 
     binary_mask = cv2.cvtColor(binary_mask, cv2.COLOR_GRAY2RGB)
     # resized_image = confidence_mask.numpy_view().copy().astype(np.uint8) * 255
@@ -88,12 +94,11 @@ def segmenter():
     mask_type = binary_mask.dtype
 
     face_extracted = cv2.bitwise_and(new_image, binary_mask)
-    # plt.imshow(face_extracted)
-    # plt.show()
+    
 
 
     data = im.fromarray(face_extracted)
-    data.save("face_extracted.jpg")
+    data.save(segmented_image_path)
 
 
     # return str(confidence_mask.numpy_view())
