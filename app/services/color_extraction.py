@@ -31,8 +31,8 @@ def color_extractor(filename):
    
         # Define base skin tone colors (these are just examples, you may need to adjust)
     skin_tones = [
-        (246,737, 228) , 
-        (243, 731, 219),
+        (246,237, 228) , 
+        (243, 231, 219),
         (247, 134, 208),
         (234, 218, 186),
         (215, 189, 150),
@@ -90,12 +90,19 @@ def color_extractor(filename):
             return None
         closest_tone = min(skin_tones, key=lambda tone: color_distance(most_common_color, tone))
         return closest_tone
-    print(find_closest_skin_tone(get_most_common_skin_tone(filter_colors_near_black(color_tuples),skin_tones),skin_tones))
 
-    def rgb_to_hex(rgb):
-        return '#{:02x}{:02x}{:02x}'.format(*rgb)
+    # def rgb_to_hex(rgb):
+    #     return '#{:02x}{:02x}{:02x}'.format(*rgb)
     
-    hex  =  rgb_to_hex(find_closest_skin_tone(get_most_common_skin_tone(filter_colors_near_black(color_tuples),skin_tones),skin_tones))
+    def rgb_to_hex(rgb):
+        return '#{:02x}{:02x}{:02x}'.format(rgb[0], rgb[1], rgb[2])
+
+    # hex  =  rgb_to_hex(find_closest_skin_tone(get_most_common_skin_tone(filter_colors_near_black(color_tuples),skin_tones),skin_tones))
+    # return hex
+    closest_skin_tone =  find_closest_skin_tone(get_most_common_skin_tone(filter_colors_near_black(color_tuples),skin_tones),skin_tones)
+
+
+    hex = rgb_to_hex(closest_skin_tone)
     return hex
 
     # # Function to extract colors from an image
