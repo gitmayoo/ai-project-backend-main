@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify,g, send_from_directory
+from flask import Blueprint, request, jsonify,g, send_file, send_from_directory
 from app.services.color_extraction import color_extractor
 from app.services.image_segmentation import segmenter
 from app.services.upload_image import handle_upload
@@ -60,9 +60,10 @@ def get_image(name):
     # param1 = request.args.get('param1')
     # return send_from_directory( app.config['UPLOAD_FOLDER'], filename)
 
-    reponse = g.csv_helper.image_url(name=name)
-    print(reponse)
-    return jsonify(reponse)
+    img_response = g.csv_helper.image_url(name=name)
+    print(img_response)
+    return send_file(img_response[0], mimetype='image/jpeg')
+
 
 @api_blueprint.route('/color',methods=['POST'])
 def color_extract():
