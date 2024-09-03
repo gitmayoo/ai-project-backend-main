@@ -1,0 +1,7 @@
+Flask
+pymongo[srv]
+Flask-PyMongo
+
+
+
+# UhaPK2YcBxWiQWCH
