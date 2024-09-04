@@ -1,6 +1,6 @@
 Flask
 firebase-admin
-
-
+bcrypt
+scikit-learn
 
 # UhaPK2YcBxWiQWCH

@@ -7,9 +7,13 @@ from app.services.csv_helper import CSVHelper
 import firebase_admin
 from firebase_admin import credentials
 
-firebase_credentials = "/Users/karthi/Development/mayoo-project/ai-project-backend-main/fashion-ai-bfee6-firebase-adminsdk-w8a8i-663173a2c4.json"
+# firebase_credentials = f"C:\Users\hp\OneDrive\Desktop\final project program\ai-project-backend-main\fashion-ai-cc420-firebase-adminsdk-c8f4s-fd131ade1f.json"
 
-cred = credentials.Certificate(firebase_credentials)
+# cred = credentials.Certificate(firebase_credentials)
+# firebase_admin.initialize_app(cred)
+firebase_cred = os.path.join(os.getcwd(),'firebase_auth.json')
+print(firebase_cred)
+cred = credentials.Certificate(firebase_cred)
 firebase_admin.initialize_app(cred)
 
 
