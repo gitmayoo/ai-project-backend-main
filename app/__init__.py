@@ -4,11 +4,33 @@ from app.routes import api_blueprint
 from flask_cors import CORS
 from config import Config
 from app.services.csv_helper import CSVHelper
+import firebase_admin
+from firebase_admin import credentials
+
+firebase_credentials = "/Users/karthi/Development/mayoo-project/ai-project-backend-main/fashion-ai-bfee6-firebase-adminsdk-w8a8i-663173a2c4.json"
+
+cred = credentials.Certificate(firebase_credentials)
+firebase_admin.initialize_app(cred)
+
 
 def create_app():
     app = Flask(__name__)
     # app.config.from_object('config.Config')
     CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
+
+
+
+
+    # firebase_credentials = os.getenv('$GOOGLE_APPLICATION_CREDENTIALS')
+    
+    
+
+   
+
+
+
+
+
     # app.config.from_object('config.Config')
     app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')  # Set upload folder
     app.config['CSV_FILE'] = os.path.join(os.getcwd(), 'data.csv')
@@ -16,7 +38,15 @@ def create_app():
     # app.config['SEGMENTED_IMGS'] = os.path.join(os.getcwd(),'segmented_images',')
     app.config['SEGMENTED_IMGS'] = os.path.join(os.getcwd(),'segmented_images',)
 
+    app.config['DRESS_IMGS'] = os.path.join(app.config['UPLOAD_FOLDER'],"Dresses")
+
+    TOP_DRESSES_MEN = os.path.join(app.config['DRESS_IMGS'],"MEN",'top')
+    TOP_DRESSES_WOMEN = os.path.join(app.config['DRESS_IMGS'],"WOMEN",'top')
+    BOTTOM_DRESSES_WOMEN = os.path.join(app.config['DRESS_IMGS'],"WOMEN",'bottom')
+    BOTTOM_DRESSES_MEN = os.path.join(app.config['DRESS_IMGS'],"MEN",'bottom')
+
     FACE_FOLDER = os.path.join(app.config['SEGMENTED_IMGS'], 'face')
+    DRESS_PATH = os.path.join(app.config['SEGMENTED_IMGS'],'dress')
     SKIN_FOLDER = os.path.join(app.config['SEGMENTED_IMGS'], 'skin')
 
 
@@ -40,6 +70,16 @@ def create_app():
         os.makedirs(app.config['SEGMENTED_IMGS'])
         os.makedirs(FACE_FOLDER, exist_ok=True)
         os.makedirs(SKIN_FOLDER, exist_ok=True)
+        os.makedirs(DRESS_PATH, exist_ok=True)
+
+
+    if not os.path.exists(app.config['DRESS_IMGS']):
+        os.makedirs(app.config['DRESS_IMGS'])
+        os.makedirs(TOP_DRESSES_MEN, exist_ok=True)
+        os.makedirs(BOTTOM_DRESSES_MEN, exist_ok=True)
+        os.makedirs(TOP_DRESSES_WOMEN, exist_ok=True)
+        os.makedirs(BOTTOM_DRESSES_WOMEN, exist_ok=True)
+
 
     # Register Blueprints
     app.register_blueprint(api_blueprint, url_prefix='/api')

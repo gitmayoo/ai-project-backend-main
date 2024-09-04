@@ -10,10 +10,10 @@ import numpy as np
 
 
 
-def segmenter(filename):
+def segmenter(filename,to_be_segmented_part = "face"):
     from app import create_app
     app = create_app()
-    to_be_segmented_part = "face"
+
 
     def allowed_file(filename):
         return '.' in filename and \
@@ -68,6 +68,8 @@ def segmenter(filename):
             segmented_part = confidence_mask[2]
         elif(to_be_segmented_part.lower() == "face"):
             segmented_part = confidence_mask[3]
+        elif(to_be_segmented_part.lower() == 'dress'):
+             segmented_part = confidence_mask[4]
         else:
             return "to_be_segmented_part is not specified"
         return segmented_part
@@ -103,3 +105,20 @@ def segmenter(filename):
 
     # return str(confidence_mask.numpy_view())
     return str((image_size,image_type,mask_size,mask_type))
+
+
+
+
+
+def clothe_segmenter(filename,dress_type,dress_gender):
+        from app import create_app
+        app = create_app()
+        file_path = os.path.join(app.config['DRESS_IMGS'],f'{dress_gender}',f'{dress_type}',filename)
+        segemented = segmenter(filename=file_path,to_be_segmented_part='dress')
+        print(segemented)
+        
+
+
+        
+        
+

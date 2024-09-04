@@ -1,7 +1,11 @@
 from flask import Blueprint, request, jsonify,g, send_file, send_from_directory
 from app.services.color_extraction import color_extractor
-from app.services.image_segmentation import segmenter
-from app.services.upload_image import handle_upload
+from app.services.image_segmentation import clothe_segmenter, segmenter
+from app.services.upload_image import dress_image_upload, handle_upload
+from werkzeug.security import generate_password_hash, check_password_hash
+import bcrypt
+
+from firebase_admin import firestore
 
 
 api_blueprint = Blueprint('api', __name__)
@@ -83,3 +87,91 @@ def color_extract():
     # return jsonify(response)
 
 
+@api_blueprint.route('/clotheUpload',methods=['POST'])
+def clotheUpload():
+    dress_image = request.files.get("file")
+    dress_type = request.form.get("type",None)
+    gender = request.form.get("gender")
+    clothe_segmenter(filename=dress_image.filename,dress_type=dress_type,dress_gender=gender.upper())
+
+    response = dress_image_upload(image=dress_image,dress_type=dress_type,gender=gender)
+    return response
+
+
+@api_blueprint.route("/db",methods=["POST"])
+def dbTest():
+    try:
+        db = firestore.client()
+        data = {
+            'name':"karthee",
+            "age":17
+        }
+        
+        # Create a new document in the 'users' collection with an auto-generated ID
+        doc_ref = db.collection('users').add(data)
+        
+        return jsonify({"message": "User added successfully", "doc_id": doc_ref[1].id}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
+
+
+
+@api_blueprint.route('/signup', methods=['POST'])
+def sign_up():
+    db=firestore.client()
+    data = request.get_json()
+
+    name = data.get('name')
+    phone = data.get('phone')
+    password = data.get('password')
+
+    if not name or not phone or not password:
+        return jsonify({'error': 'Name, phone, and password are required'}), 400
+
+    # Hash the password
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+    try:
+        # Store user details in Firestore
+        user_data = {
+            'name': name,
+            'phone': phone,
+            'password': hashed_password.decode('utf-8')
+        }
+        db.collection('users').document().set(user_data)
+
+        return jsonify({'message': 'User created successfully'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    # return jsonify("data")
+
+@api_blueprint.route('/login', methods=['POST'])
+def login():
+    db = firestore.client()
+    data = request.get_json()
+    phone = data.get('phone')
+    password = data.get('password')
+
+    if not phone or not password:
+        return jsonify({'error': 'Phone and password are required'}), 400
+
+    try:
+        # Find the user in Firestore by phone number
+        user_ref = db.collection('users').where('phone' ,"==", phone).get()
+        
+        if len(user_ref) == 0:
+            return jsonify({'error': 'User not found'}), 404
+
+        user_data = [doc.to_dict() for doc in user_ref]
+        print(user_data)
+
+        # Verify the password
+        stored_password_hash = user_data[0]['password']
+        if not bcrypt.checkpw(password.encode('utf-8'), stored_password_hash.encode('utf-8')):
+            return jsonify({'error': 'Invalid credentials'}), 401
+
+        return jsonify({'message': 'Login successful'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
