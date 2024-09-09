@@ -170,3 +170,35 @@ app/uploads
 app/segmented_images/face/*.jpg
 
 app/segmented_images/face/mayoo_20240827_135749.jpg
+uploads/*.jpg
+# uploads/billla_20240909_135710.jpg
+# uploads/kajskajs_20240909_130916.jpg
+# uploads/kajskajs_20240909_131226.jpg
+# uploads/Karthee_20240909_133859.jpg
+# uploads/karthee_20240909_134600.jpg
+# uploads/Karthee_20240909_142009.jpg
+# uploads/Kartheepan_20240906_174324.jpg
+# uploads/Kartheepan_20240906_174400.jpg
+# uploads/Kartheepan_20240909_125738.jpg
+# uploads/Kartheepan_20240909_131705.jpg
+# uploads/Kartheepan_20240909_131918.jpg
+# uploads/Kartheepan_20240909_134333.jpg
+# uploads/Makee_20240909_130105.jpg
+# uploads/Makee_20240909_130146.jpg
+# uploads/name_20240906_174120.jpg
+# uploads/skjksjf_20240909_134747.jpg
+# uploads/undefined_20240906_174042.jpg
+# uploads/undefined_20240906_174253.jpg
+# uploads/undefined_20240909_133040.jpg
+# uploads/undefined_20240909_133256.jpg
+# uploads/undefined_20240909_133358.jpg
+# uploads/undefined_20240909_133533.jpg
+segmented_images/*
+
+app/segmented_images/*
+app/segmented_images/face
+
+firebase_auth.json
+data.csv
+
+app/data.csv

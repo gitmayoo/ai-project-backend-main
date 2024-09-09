@@ -45,7 +45,15 @@ def segment():
     # print(request.json)
     data = request.get_json()
     filename = data['filename']
+    # dress = data['is_dress']
+    # print(dress)
+    
+   
     segmenter(filename)
+    # if data['is_dress']:
+    #     path = segmenter(filename=filename)
+    #     print(path)
+    # return path
 
     
     
@@ -96,10 +104,30 @@ def clotheUpload():
     dress_image = request.files.get("file")
     dress_type = request.form.get("type",None)
     gender = request.form.get("gender")
-    clothe_segmenter(filename=dress_image.filename,dress_type=dress_type,dress_gender=gender.upper())
 
     response = dress_image_upload(image=dress_image,dress_type=dress_type,gender=gender)
-    return response
+    # if data['is_dress']:
+    #     path = segmenter(filename=filename)
+    #     print(path)
+    # return path
+    path = clothe_segmenter(filename=dress_image.filename,dress_type=dress_type,dress_gender=gender.upper())
+    return path
+
+
+# @api_blueprint.route("/clothe_segment",methods=["POST"])
+# def clothe_segmenter():
+#     data = request.get_json()
+#     filename = data['filename']
+    
+#     # dress = data['is_dress']
+#     # print(dress)
+    
+   
+#     if data['is_dress']:
+#         path = segmenter(filename=filename)
+#         print(path)
+#         segmenter(filename,is_dress=True,dress_file=path) 
+#     return path
 
 
 @api_blueprint.route("/db",methods=["POST"])
@@ -144,9 +172,9 @@ def sign_up():
             'phone': phone,
             'password': hashed_password.decode('utf-8')
         }
-        db.collection('users').document().set(user_data)
+        user = db.collection('users').document().set(user_data)
 
-        return jsonify({'message': 'User created successfully'}), 201
+        return jsonify({'message': 'User created successfully '}), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     # return jsonify("data")
@@ -155,95 +183,136 @@ def sign_up():
 def login():
     db = firestore.client()
     data = request.get_json()
-    phone = data.get('phone')
+    name = data.get('name')
     password = data.get('password')
 
-    if not phone or not password:
-        return jsonify({'error': 'Phone and password are required'}), 400
+    if not name or not password:
+        return jsonify({'error': 'name and password are required'}), 400
 
     try:
         # Find the user in Firestore by phone number
-        user_ref = db.collection('users').where('phone' ,"==", phone).get()
+        user_ref = db.collection('users').where('name' ,"==", name).get()
         
         if len(user_ref) == 0:
             return jsonify({'error': 'User not found'}), 404
 
         user_data = [doc.to_dict() for doc in user_ref]
-        print(user_data)
+        # print(user_data)
 
         # Verify the password
         stored_password_hash = user_data[0]['password']
         if not bcrypt.checkpw(password.encode('utf-8'), stored_password_hash.encode('utf-8')):
             return jsonify({'error': 'Invalid credentials'}), 401
 
-        return jsonify({'message': 'Login successful'}), 200
+        return jsonify(user_data), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 
 
+
 # Initialize data
-data = {
+female_data = {
     'user_id': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     'skin_tone_r': [255, 204, 139, 255, 180, 120, 230, 160, 100, 220],
     'skin_tone_g': [224, 153, 69, 185, 150, 90, 200, 130, 70, 190],
     'skin_tone_b': [189, 102, 19, 140, 120, 60, 170, 100, 40, 160],
     'skin_tone_category': ['Light', 'Medium', 'Dark', 'Light', 'Medium', 'Dark', 'Light', 'Medium', 'Dark', 'Light'],
-    'purchased_item_id': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    'purchased_item_id': [3, 2, 1, 4, 5, 5, 7, 8, 6, 10]
 }
 
-# Create DataFrame
-df = pd.DataFrame(data)
+male_data = {
+    'user_id': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    'skin_tone_r': [255, 204, 139, 255, 180, 120, 230, 160, 100, 220],
+    'skin_tone_g': [224, 153, 69, 185, 150, 90, 200, 130, 70, 190],
+    'skin_tone_b': [189, 102, 19, 140, 120, 60, 170, 100, 40, 160],
+    'skin_tone_category': ['Light', 'Medium', 'Dark', 'Light', 'Medium', 'Dark', 'Light', 'Medium', 'Dark', 'Light'],
+    'purchased_item_id': [3, 2, 2, 4, 5, 11, 7, 8, 14, 10]
+}
 
-# Convert categorical features to numerical
-label_encoder = LabelEncoder()
-df['skin_tone_category'] = label_encoder.fit_transform(df['skin_tone_category'])
 
-# Extract features for clustering
-features = df[['skin_tone_r', 'skin_tone_g', 'skin_tone_b', 'skin_tone_category', 'purchased_item_id']]
-
-# Normalize features
-scaler = StandardScaler()
-features_normalized = scaler.fit_transform(features)
-
-# Apply K-means
-n_clusters = 3
-kmeans = KMeans(n_clusters=n_clusters, random_state=0)
-df['cluster'] = kmeans.fit_predict(features_normalized)
-
-# Function to assign a new user to a cluster
-def assign_user_to_cluster(user_features, kmeans_model, scaler):
-    user_features_scaled = scaler.transform([user_features])
-    cluster = kmeans_model.predict(user_features_scaled)
-    return cluster[0]
-
-# Function to recommend items based on the cluster
-def recommend_items(user_cluster, data):
-    recommended_items = data[data['cluster'] == user_cluster]['purchased_item_id']
-    return recommended_items.unique()
 
 # Flask endpoint to get recommendations for a new user
 @api_blueprint.route('/recommend', methods=['POST'])
 def recommend():
-    # Parse JSON request data
-    req_data = request.get_json()
-    skin_tone_r = req_data['skin_tone_r']
-    skin_tone_g = req_data['skin_tone_g']
-    skin_tone_b = req_data['skin_tone_b']
-    skin_tone_category = req_data['skin_tone_category']
-    purchased_item_id = req_data['purchased_item_id']
+    info = request.get_json()
+    data = info['gender']
+    colorTone = info['colorTone']
+        # Create DataFrame
 
-    # Convert skin tone category to numerical value
+    df = pd.DataFrame(male_data)
+
+    # Convert categorical features to numerical
+    label_encoder = LabelEncoder()
+    df['skin_tone_category'] = label_encoder.fit_transform(df['skin_tone_category'])
+
+    # Extract features for clustering
+    features = df[['skin_tone_r', 'skin_tone_g', 'skin_tone_b', 'skin_tone_category', 'purchased_item_id']]
+
+    # Normalize features
+    scaler = StandardScaler()
+    features_normalized = scaler.fit_transform(features)
+
+    # Apply K-means
+    n_clusters = 3
+    kmeans = KMeans(n_clusters=n_clusters, random_state=0)
+    df['cluster'] = kmeans.fit_predict(features_normalized)
+
+    # Function to assign a new user to a cluster
+    def assign_user_to_cluster(user_features, kmeans_model, scaler):
+        user_features_scaled = scaler.transform([user_features])
+        cluster = kmeans_model.predict(user_features_scaled)
+        return cluster[0]
+
+    # Function to recommend items based on the cluster
+    def recommend_items(user_cluster, data):
+        recommended_items = data[data['cluster'] == user_cluster]['purchased_item_id']
+        return recommended_items.unique()
+    
+    def hex_to_rgb(hex):
+        hex_color = hex.lstrip('#')
+        return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+    
+        # Function to calculate luminance
+    def calculate_luminance(rgb):
+        r, g, b = rgb
+        return 0.299*r + 0.587*g + 0.114*b
+
+    # Classify skin tones based on luminance
+    def classify_skin_tone(luminance):
+        if luminance >= 200:
+            return 'Light'
+        elif luminance >= 100:
+            return 'Medium'
+        else:
+            return 'Dark'
+
+    color = hex_to_rgb(colorTone)
+    print(color[0])
+    # Parse JSON request data
+
+    skin_tone_r = color[0]
+    skin_tone_g = color[1]
+    skin_tone_b = color[2]
+    skin_tone_category = classify_skin_tone(calculate_luminance(color))
+    purchased_item_id = male_data['purchased_item_id'][0]
+
+    print(
+    classify_skin_tone(calculate_luminance(color))
+
+    )
+    # # Convert skin tone category to numerical value
     skin_tone_category_num = label_encoder.transform([skin_tone_category])[0]
 
-    # Create user feature vector
+    # # Create user feature vector
     user_features = [skin_tone_r, skin_tone_g, skin_tone_b, skin_tone_category_num, purchased_item_id]
 
-    # Assign user to a cluster
+    # # Assign user to a cluster
     user_cluster = assign_user_to_cluster(user_features, kmeans, scaler)
 
-    # Get recommendations
+    # # Get recommendations
     recommended_items = recommend_items(user_cluster, df)
+    print(recommended_items)
 
     # Return recommendations as JSON response
     # return jsonify({
@@ -251,4 +320,5 @@ def recommend():
     #     'recommended_items': recommended_items.tolist()
     # })
     # print(jsonify({"user_cluster":user_cluster}))
+
     return "succeed"
