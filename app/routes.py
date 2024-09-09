@@ -1,3 +1,4 @@
+import os
 from flask import Blueprint, request, jsonify,g, send_file, send_from_directory
 from app.services.color_extraction import color_extractor
 from app.services.image_segmentation import clothe_segmenter, segmenter
@@ -81,6 +82,41 @@ def get_image(name):
     return send_file(img_response[0], mimetype='image/jpeg')
 
 
+
+
+BASE_IMAGE_PATH= '/Users/karthi/Development/mayoo-project/ai-project-backend-main/app/Clothes'
+@api_blueprint.route('/get-cloth-image', methods=['GET'])
+def get_cloth_image():
+    try:
+        # Parse JSON request data
+        # info = request.get_json()
+        # gender = info.get('gender')
+        # image_name = info.get('image_name')
+        # gender = image_gender
+        # image_name = image_file
+        gender = request.args.get('gender')
+        image_name = request.args.get('image_name')
+        # Validate input
+        if not gender or not image_name:
+            return jsonify({'error': 'Gender and image name are required'}), 400
+
+        # Determine the folder based on gender
+        gender_folder = gender.lower()  # Assuming gender folder names are 'male' and 'female'
+
+        # Construct the full image path
+        image_directory = os.path.join(BASE_IMAGE_PATH, gender_folder)
+        print(image_directory)
+
+
+        # Check if the file exists
+        if not os.path.exists(os.path.join(image_directory, image_name)):
+            return jsonify({'error': 'Image not found'}), 404
+
+        # Send the image file as a response
+        return send_from_directory(image_directory, image_name)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 @api_blueprint.route('/color',methods=['POST'])
 def color_extract():
     data = request.get_json()
@@ -322,3 +358,56 @@ def recommend():
     # print(jsonify({"user_cluster":user_cluster}))
 
     return "succeed"
+
+
+@api_blueprint.route('/get-images', methods=['POST'])
+def get_images():
+
+    
+
+    
+    # Parse JSON request data
+    try:
+        info = request.get_json()
+        color_category = info.get('color_category')
+        gender = info.get('gender')
+
+        if gender == "male":
+            csv_file_path = 'app/dressData_male.csv'
+        else:
+            csv_file_path = 'app/dressData_female.csv'
+        df = pd.read_csv(csv_file_path)
+
+        if not color_category:
+            return jsonify({'error': 'Color category is required'}), 400
+
+        # Filter data based on the color category
+        filtered_df = df[df['color_category'].str.lower() == color_category.lower()]
+
+        if filtered_df.empty:
+            return jsonify({'error': 'No images found for the specified color category'}), 404
+
+        # Return image names and prominent colors
+        result = filtered_df[['image_name', 'prominent_color']].to_dict(orient='records')
+
+
+
+#  Helper function to convert RGB string to hex
+        def rgb_to_hex(rgb_str):
+            # Convert "(255, 0, 0)" -> "#FF0000"
+            rgb = tuple(map(int, rgb_str.strip("()").split(",")))
+            return '#{:02x}{:02x}{:02x}'.format(rgb[0], rgb[1], rgb[2]).upper()
+
+        # Convert RGB values to hex and prepare the result
+        result = []
+        for _, row in filtered_df.iterrows():
+            hex_color = rgb_to_hex(row['prominent_color'])
+            result.append({
+                'image_name': row['image_name'],
+                'prominent_color': hex_color
+            })
+
+        return jsonify(result), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
