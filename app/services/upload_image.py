@@ -60,6 +60,7 @@ def dress_image_upload(image,dress_type,gender):
         # filename = f"{dress_image}_{current_time}{os.path.splitext(dress_image.filename)[1]}" 
         filename = dress_image.filename
         print(filename)
+
         # # filename = name
         file_path = os.path.join(app.config['DRESS_IMGS'], f"{dress_gender.upper()}",f'{dress_type}',filename) # type: ignore
         print(file_path)
@@ -73,7 +74,7 @@ def dress_image_upload(image,dress_type,gender):
 
         # print(g.csv_helper.read_row())
         
-        return jsonify({"message":"Image uploaded Sucessfully","filename":filename}),200
+        return jsonify({"message":"Image uploaded Sucessfully","filepath":file_path}),200
 
 
     else:
