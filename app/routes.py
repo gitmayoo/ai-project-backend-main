@@ -362,22 +362,28 @@ def recommend():
 
 @api_blueprint.route('/get-images', methods=['POST'])
 def get_images():
-
-    
-
     
     # Parse JSON request data
     try:
         info = request.get_json()
         color_category = info.get('color_category')
         gender = info.get('gender')
-
+        dressType = info.get("type")
         if gender == "male":
-            csv_file_path = 'app/dressData_male.csv'
+            if dressType == "top":
+                csv_file_path = os.path.join(os.getcwd(),'app/dressData_male.csv')
+            else:
+                csv_file_path = os.path.join(os.getcwd(),'app/dressDataBottom_male.csv')
         else:
-            csv_file_path = 'app/dressData_female.csv'
-        df = pd.read_csv(csv_file_path)
+            if dressType == "top":
+                csv_file_path = os.path.join(os.getcwd(),'app/dressData_female.csv')
+                print("top female")
+            else:
+                csv_file_path = os.path.join(os.getcwd(),'app/dressDataBottom_female.csv')
+                print("bottom female")
 
+            
+        df = pd.read_csv(csv_file_path)
         if not color_category:
             return jsonify({'error': 'Color category is required'}), 400
 
