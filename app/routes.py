@@ -84,7 +84,7 @@ def get_image(name):
 
 
 
-BASE_IMAGE_PATH= '/Users/karthi/Development/mayoo-project/ai-project-backend-main/app/Clothes'
+BASE_IMAGE_PATH= os.path.join(os.getcwd(),'Clothes')
 @api_blueprint.route('/get-cloth-image', methods=['GET'])
 def get_cloth_image():
     try:
@@ -254,8 +254,19 @@ female_data = {
     'skin_tone_g': [224, 153, 69, 185, 150, 90, 200, 130, 70, 190],
     'skin_tone_b': [189, 102, 19, 140, 120, 60, 170, 100, 40, 160],
     'skin_tone_category': ['Light', 'Medium', 'Dark', 'Light', 'Medium', 'Dark', 'Light', 'Medium', 'Dark', 'Light'],
-    'purchased_item_id': [3, 2, 1, 4, 5, 5, 7, 8, 6, 10]
-}
+    'purchased_item_id':[ 
+
+18,
+13,
+19,
+3,
+13,
+19,
+18,
+3,
+28,
+12,
+]}
 
 male_data = {
     'user_id': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -263,8 +274,17 @@ male_data = {
     'skin_tone_g': [224, 153, 69, 185, 150, 90, 200, 130, 70, 190],
     'skin_tone_b': [189, 102, 19, 140, 120, 60, 170, 100, 40, 160],
     'skin_tone_category': ['Light', 'Medium', 'Dark', 'Light', 'Medium', 'Dark', 'Light', 'Medium', 'Dark', 'Light'],
-    'purchased_item_id': [3, 2, 2, 4, 5, 11, 7, 8, 14, 10]
-}
+    'purchased_item_id': [11,
+2,
+14,
+4,
+11,
+12,
+4,
+2,
+3,
+11,
+]}
 
 
 
@@ -272,11 +292,14 @@ male_data = {
 @api_blueprint.route('/recommend', methods=['POST'])
 def recommend():
     info = request.get_json()
-    data = info['gender']
+    gender = info['gender']
     colorTone = info['colorTone']
         # Create DataFrame
 
-    df = pd.DataFrame(male_data)
+    if gender == "male":
+        df = pd.DataFrame(male_data)
+    else:
+        df = pd.DataFrame(female_data)
 
     # Convert categorical features to numerical
     label_encoder = LabelEncoder()
@@ -371,15 +394,15 @@ def get_images():
         dressType = info.get("type")
         if gender == "male":
             if dressType == "top":
-                csv_file_path = os.path.join(os.getcwd(),'app/dressData_male.csv')
+                csv_file_path = os.path.join(os.getcwd(),'dressData_male.csv')
             else:
-                csv_file_path = os.path.join(os.getcwd(),'app/dressDataBottom_male.csv')
+                csv_file_path = os.path.join(os.getcwd(),'dressDataBottom_male.csv')
         else:
             if dressType == "top":
-                csv_file_path = os.path.join(os.getcwd(),'app/dressData_female.csv')
+                csv_file_path = os.path.join(os.getcwd(),'dressData_female.csv')
                 print("top female")
             else:
-                csv_file_path = os.path.join(os.getcwd(),'app/dressDataBottom_female.csv')
+                csv_file_path = os.path.join(os.getcwd(),'dressDataBottom_female.csv')
                 print("bottom female")
 
             
