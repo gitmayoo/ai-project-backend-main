@@ -35,17 +35,18 @@ git clone https://github.com/gitmayoo/ai-project-backend-main.git
 cd ai-project-backend-main
 ```
 
-### 2. Setting the Python path and installing the packages
+
+### 2. Changing into the directory
+
+```bash
+cd app/
+```
+
+### 3. Setting the Python path and installing the packages
 
 ```bash
 set PYTHONPATH=.
 pip install -r requirements.txt
-```
-
-### 3. Changing into the directory
-
-```bash
-cd app/
 ```
 
 ### 4. Setting up the server
