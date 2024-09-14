@@ -31,7 +31,7 @@ To run this project, you will need:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/your-repo.git](https://github.com/gitmayoo/ai-project-backend-main.git
+git clone https://github.com/gitmayoo/ai-project-backend-main.git
 cd ai-project-backend-main
 ```
 
