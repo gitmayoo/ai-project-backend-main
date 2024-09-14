@@ -85,7 +85,7 @@ def get_image(name):
 
 
 
-BASE_IMAGE_PATH= os.path.join(os.getcwd(),'app/Clothes')
+BASE_IMAGE_PATH= os.path.join(os.getcwd(),'Clothes')
 @api_blueprint.route('/get-cloth-image', methods=['GET'])
 def get_cloth_image():
     try:
@@ -395,15 +395,15 @@ def get_images():
         dressType = info.get("type")
         if gender == "male":
             if dressType == "top":
-                csv_file_path = os.path.join(os.getcwd(),'app/dressData_male.csv')
+                csv_file_path = os.path.join(os.getcwd(),'dressData_male.csv')
             else:
-                csv_file_path = os.path.join(os.getcwd(),'app/dressDataBottom_male.csv')
+                csv_file_path = os.path.join(os.getcwd(),'dressDataBottom_male.csv')
         else:
             if dressType == "top":
-                csv_file_path = os.path.join(os.getcwd(),'app/dressData_female.csv')
+                csv_file_path = os.path.join(os.getcwd(),'dressData_female.csv')
                 print("top female")
             else:
-                csv_file_path = os.path.join(os.getcwd(),'app/dressDataBottom_female.csv')
+                csv_file_path = os.path.join(os.getcwd(),'dressDataBottom_female.csv')
                 print("bottom female")
 
             
@@ -454,15 +454,15 @@ def get_images_by_id():
         id = info.get("id")
         if gender == "male":
             if dressType == "top":
-                csv_file_path = os.path.join(os.getcwd(),'app/dressData_male.csv')
+                csv_file_path = os.path.join(os.getcwd(),'dressData_male.csv')
             else:
-                csv_file_path = os.path.join(os.getcwd(),'app/dressDataBottom_male.csv')
+                csv_file_path = os.path.join(os.getcwd(),'dressDataBottom_male.csv')
         else:
             if dressType == "top":
-                csv_file_path = os.path.join(os.getcwd(),'app/dressData_female.csv')
+                csv_file_path = os.path.join(os.getcwd(),'dressData_female.csv')
                 print("top female")
             else:
-                csv_file_path = os.path.join(os.getcwd(),'app/dressDataBottom_female.csv')
+                csv_file_path = os.path.join(os.getcwd(),'dressDataBottom_female.csv')
                 print("bottom female")
 
             
@@ -505,9 +505,11 @@ def get_images_by_id():
 
 
 # Load the pre-trained models
-kmeans = joblib.load('app/models/kmeans_model.pkl')
-scaler = joblib.load('app/models/scaler.pkl')
-preprocessor = joblib.load('app/models/preprocessor.pkl')
+modelPath = os.path.join(os.getcwd(),'models')
+
+kmeans = joblib.load(os.path.join(modelPath,"kmeans_model.pkl"))
+scaler = joblib.load(os.path.join(modelPath,"scaler.pkl"))
+preprocessor = joblib.load(os.path.join(modelPath,"preprocessor.pkl"))
 
 def hex_to_rgb(hex):
     """Convert hex color to RGB tuple."""
