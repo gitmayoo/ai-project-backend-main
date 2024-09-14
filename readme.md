@@ -31,8 +31,13 @@ To run this project, you will need:
 ### 1. Clone the repository
 
 ```bash
+<<<<<<< HEAD
 git clone https://github.com/your-username/your-repo.git
 cd your-repo
+=======
+git clone https://github.com/gitmayoo/ai-project-backend-main.git
+cd ai-project-backend-main
+>>>>>>> 63c8715 (Update readme.md)
 ```
 
 ### 2. Setting the Python path and installing the packages
