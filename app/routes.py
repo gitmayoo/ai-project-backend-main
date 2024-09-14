@@ -505,9 +505,9 @@ def get_images_by_id():
 
 
 # Load the pre-trained models
-kmeans = joblib.load('/Users/karthi/kmeans_model.pkl')
-scaler = joblib.load('/Users/karthi/scaler.pkl')
-preprocessor = joblib.load('/Users/karthi/preprocessor.pkl')
+kmeans = joblib.load('app/models/kmeans_model.pkl')
+scaler = joblib.load('app/models/scaler.pkl')
+preprocessor = joblib.load('app/models/preprocessor.pkl')
 
 def hex_to_rgb(hex):
     """Convert hex color to RGB tuple."""
@@ -549,7 +549,7 @@ def recommender():
 
         # Load the actual data
         # Replace the path with your actual file paths
-        actual_data_path = '/Users/karthi/user_data_with_rgb.csv'
+        actual_data_path = 'app/user_data_with_rgb.csv'
         df = pd.read_csv(actual_data_path)
         
         # Ensure the DataFrame contains necessary columns
@@ -572,6 +572,34 @@ def recommender():
         })
         return jsonify({"recommended_items":recommended_items.tolist()})
     
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
+
+
+@api_blueprint.route("/save_purchase", methods=['POST'])
+def purchase():
+    try:
+        info = request.get_json()
+        db = firestore.client()
+        purchased_top = info.get('purchasedTop')
+        purchased_bottom = info.get('purchasedBottom')
+        skin_tone = info.get('skinTone')
+
+        if purchased_top is None or purchased_bottom is None or skin_tone is None:
+            return jsonify({'error': 'Missing required fields'}), 400
+
+        # Create a unique document ID for each purchase entry
+        purchase_ref = db.collection('purchases').add({
+            'purchased_top': purchased_top,
+            'purchased_bottom': purchased_bottom,
+            'skin_tone': skin_tone
+        })
+
+        return jsonify({'message': 'Purchase saved successfully'}), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
