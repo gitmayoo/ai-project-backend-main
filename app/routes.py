@@ -84,7 +84,7 @@ def get_image(name):
 
 
 
-BASE_IMAGE_PATH= '/Users/karthi/Development/mayoo-project/ai-project-backend-main/app/Clothes'
+BASE_IMAGE_PATH= os.path.join(os.getcwd(),'app/Clothes')
 @api_blueprint.route('/get-cloth-image', methods=['GET'])
 def get_cloth_image():
     try:
