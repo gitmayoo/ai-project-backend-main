@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a backend service built using the Flask web framework and Google Firestore as the database. It provides APIs to perform CRUD (Create, Read, Update, Delete) operations on a collection of data stored in Firestore. The project is designed to be scalable, easy to deploy, and structured for further expansion.
+This is a backend service built using the Flask web framework and Google Firestore as the database. It provides APIs to perform CRUD (Create, Read, Update, Delete) operations on a collection of data stored in Firestore. The project is designed to be scalable, easy to deploy, and structured for further expansion..
 
 ## Features
 
