@@ -33,6 +33,7 @@ To run this project, you will need:
 ```bash
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 git clone https://github.com/your-username/your-repo.git
 cd your-repo
 =======
@@ -54,6 +55,10 @@ cd your-repo
 
 ```bash
 cd app/
+=======
+git clone https://github.com/your-username/your-repo.git](https://github.com/gitmayoo/ai-project-backend-main.git
+cd ai-project-backend-main
+>>>>>>> c584c09 (Revert "Update readme.md")
 ```
 
 ### 3. Setting the Python path and installing the packages
