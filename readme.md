@@ -35,17 +35,11 @@ git clone https://github.com/your-username/your-repo.git
 cd your-repo
 ```
 
-### 2. Setting the Python path and installing the packages
+### 3. Setting the Python path and installing the packages
 
 ```bash
 set PYTHONPATH=.
 pip install -r requirements.txt
-```
-
-### 3. Changing into the directory
-
-```bash
-cd app/
 ```
 
 ### 4. Setting up the server
