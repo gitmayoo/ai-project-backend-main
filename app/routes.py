@@ -1,6 +1,5 @@
 import os
 from flask import Blueprint, request, jsonify,g, send_file, send_from_directory
-import joblib
 from app.services.color_extraction import color_extractor
 from app.services.image_segmentation import clothe_segmenter, segmenter
 from app.services.upload_image import dress_image_upload, handle_upload
@@ -85,7 +84,7 @@ def get_image(name):
 
 
 
-BASE_IMAGE_PATH= os.path.join(os.getcwd(),'app/Clothes')
+BASE_IMAGE_PATH= '/Users/karthi/Development/mayoo-project/ai-project-backend-main/app/Clothes'
 @api_blueprint.route('/get-cloth-image', methods=['GET'])
 def get_cloth_image():
     try:
@@ -255,19 +254,8 @@ female_data = {
     'skin_tone_g': [224, 153, 69, 185, 150, 90, 200, 130, 70, 190],
     'skin_tone_b': [189, 102, 19, 140, 120, 60, 170, 100, 40, 160],
     'skin_tone_category': ['Light', 'Medium', 'Dark', 'Light', 'Medium', 'Dark', 'Light', 'Medium', 'Dark', 'Light'],
-    'purchased_item_id':[ 
-
-18,
-13,
-19,
-3,
-13,
-19,
-18,
-3,
-28,
-12,
-]}
+    'purchased_item_id': [3, 2, 1, 4, 5, 5, 7, 8, 6, 10]
+}
 
 male_data = {
     'user_id': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -275,17 +263,8 @@ male_data = {
     'skin_tone_g': [224, 153, 69, 185, 150, 90, 200, 130, 70, 190],
     'skin_tone_b': [189, 102, 19, 140, 120, 60, 170, 100, 40, 160],
     'skin_tone_category': ['Light', 'Medium', 'Dark', 'Light', 'Medium', 'Dark', 'Light', 'Medium', 'Dark', 'Light'],
-    'purchased_item_id': [11,
-2,
-14,
-4,
-11,
-12,
-4,
-2,
-3,
-11,
-]}
+    'purchased_item_id': [3, 2, 2, 4, 5, 11, 7, 8, 14, 10]
+}
 
 
 
@@ -293,14 +272,11 @@ male_data = {
 @api_blueprint.route('/recommend', methods=['POST'])
 def recommend():
     info = request.get_json()
-    gender = info['gender']
+    data = info['gender']
     colorTone = info['colorTone']
         # Create DataFrame
 
-    if gender == "male":
-        df = pd.DataFrame(male_data)
-    else:
-        df = pd.DataFrame(female_data)
+    df = pd.DataFrame(male_data)
 
     # Convert categorical features to numerical
     label_encoder = LabelEncoder()
@@ -386,28 +362,22 @@ def recommend():
 
 @api_blueprint.route('/get-images', methods=['POST'])
 def get_images():
+
+    
+
     
     # Parse JSON request data
     try:
         info = request.get_json()
         color_category = info.get('color_category')
         gender = info.get('gender')
-        dressType = info.get("type")
-        if gender == "male":
-            if dressType == "top":
-                csv_file_path = os.path.join(os.getcwd(),'app/dressData_male.csv')
-            else:
-                csv_file_path = os.path.join(os.getcwd(),'app/dressDataBottom_male.csv')
-        else:
-            if dressType == "top":
-                csv_file_path = os.path.join(os.getcwd(),'app/dressData_female.csv')
-                print("top female")
-            else:
-                csv_file_path = os.path.join(os.getcwd(),'app/dressDataBottom_female.csv')
-                print("bottom female")
 
-            
+        if gender == "male":
+            csv_file_path = 'app/dressData_male.csv'
+        else:
+            csv_file_path = 'app/dressData_female.csv'
         df = pd.read_csv(csv_file_path)
+
         if not color_category:
             return jsonify({'error': 'Color category is required'}), 400
 
@@ -418,7 +388,7 @@ def get_images():
             return jsonify({'error': 'No images found for the specified color category'}), 404
 
         # Return image names and prominent colors
-        result = filtered_df[['id','image_name', 'prominent_color']].to_dict(orient='records')
+        result = filtered_df[['image_name', 'prominent_color']].to_dict(orient='records')
 
 
 
@@ -433,173 +403,11 @@ def get_images():
         for _, row in filtered_df.iterrows():
             hex_color = rgb_to_hex(row['prominent_color'])
             result.append({
-                'id':row['id'],
                 'image_name': row['image_name'],
                 'prominent_color': hex_color
             })
 
         return jsonify(result), 200
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-    
-
-@api_blueprint.route('/get-images-id', methods=['POST'])
-def get_images_by_id():
-    try:
-        info = request.get_json()
-        color_category = info.get('color_category')
-        gender = info.get('gender')
-        dressType = info.get("type")
-        id = info.get("id")
-        if gender == "male":
-            if dressType == "top":
-                csv_file_path = os.path.join(os.getcwd(),'app/dressData_male.csv')
-            else:
-                csv_file_path = os.path.join(os.getcwd(),'app/dressDataBottom_male.csv')
-        else:
-            if dressType == "top":
-                csv_file_path = os.path.join(os.getcwd(),'app/dressData_female.csv')
-                print("top female")
-            else:
-                csv_file_path = os.path.join(os.getcwd(),'app/dressDataBottom_female.csv')
-                print("bottom female")
-
-            
-        df = pd.read_csv(csv_file_path)
-        if not color_category:
-            return jsonify({'error': 'Color category is required'}), 400
-
-        # Filter data based on the color category
-        filtered_df = df[df['id'] == id]
-
-        if filtered_df.empty:
-            return jsonify({'error': 'No images found for the specified color category'}), 404
-
-        # Return image names and prominent colors
-        result = filtered_df[['id','image_name', 'prominent_color']].to_dict(orient='records')
-
-
-
-#  Helper function to convert RGB string to hex
-        def rgb_to_hex(rgb_str):
-            # Convert "(255, 0, 0)" -> "#FF0000"
-            rgb = tuple(map(int, rgb_str.strip("()").split(",")))
-            return '#{:02x}{:02x}{:02x}'.format(rgb[0], rgb[1], rgb[2]).upper()
-
-        # Convert RGB values to hex and prepare the result
-        result = []
-        for _, row in filtered_df.iterrows():
-            hex_color = rgb_to_hex(row['prominent_color'])
-            result.append({
-                'id':row['id'],
-                'image_name': row['image_name'],
-                'prominent_color': hex_color
-            })
-
-        return jsonify(result), 200
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-    
-
-
-# Load the pre-trained models
-kmeans = joblib.load('app/models/kmeans_model.pkl')
-scaler = joblib.load('app/models/scaler.pkl')
-preprocessor = joblib.load('app/models/preprocessor.pkl')
-
-def hex_to_rgb(hex):
-    """Convert hex color to RGB tuple."""
-    hex_color = hex.lstrip('#')
-    return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
-
-@api_blueprint.route("/new_recommend", methods=["POST"])
-def recommender():
-    try:
-        # Parse request data
-        info = request.get_json()
-        gender = info.get('gender')
-        colorTone = info.get('colorTone')
-        dressType = info.get("dressType")
-
-        dressCategory = ""
-        if dressType == "top":
-            dressCategory = 'purchased_top'
-        else:
-            dressCategory = 'purchased_bottom'
-        
-        if not gender or not colorTone:
-            return jsonify({'error': 'Gender and colorTone are required'}), 400
-
-        # Create DataFrame for new user
-        user_df = pd.DataFrame([{
-            'skin_tone_r': hex_to_rgb(colorTone)[0],
-            'skin_tone_g': hex_to_rgb(colorTone)[1],
-            'skin_tone_b': hex_to_rgb(colorTone)[2],
-            'gender': gender
-        }])
-
-        # Apply transformations
-        user_features = preprocessor.transform(user_df)
-        user_features_scaled = scaler.transform(user_features)
-        
-        # Assign user to a cluster
-        user_cluster = kmeans.predict(user_features_scaled)[0]
-
-        # Load the actual data
-        # Replace the path with your actual file paths
-        actual_data_path = 'app/user_data_with_rgb.csv'
-        df = pd.read_csv(actual_data_path)
-        
-        # Ensure the DataFrame contains necessary columns
-        required_columns = ['skin_tone_r', 'skin_tone_g', 'skin_tone_b', 'gender', dressCategory]
-        for col in required_columns:
-            if col not in df.columns:
-                return jsonify({'error': f'Missing column: {col}'}), 500
-        
-        # Apply preprocessing to the actual data
-        df['gender'] = df['gender'].astype(str)  # Ensure gender is in the same format
-        df_features = preprocessor.transform(df[['skin_tone_r', 'skin_tone_g', 'skin_tone_b', 'gender']])
-        df_scaled = scaler.transform(df_features)
-        df['cluster'] = kmeans.predict(df_scaled)
-
-        # Get recommendations based on the cluster
-        recommended_items = df[df['cluster'] == user_cluster]['purchased_top'].unique()
-        print({
-            'user_cluster': user_cluster,
-            'recommended_items': recommended_items.tolist()
-        })
-        return jsonify({"recommended_items":recommended_items.tolist()})
-    
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-
-
-
-@api_blueprint.route("/save_purchase", methods=['POST'])
-def purchase():
-    try:
-        info = request.get_json()
-        db = firestore.client()
-        purchased_top = info.get('purchasedTop')
-        purchased_bottom = info.get('purchasedBottom')
-        skin_tone = info.get('skinTone')
-
-        if purchased_top is None or purchased_bottom is None or skin_tone is None:
-            return jsonify({'error': 'Missing required fields'}), 400
-
-        # Create a unique document ID for each purchase entry
-        purchase_ref = db.collection('purchases').add({
-            'purchased_top': purchased_top,
-            'purchased_bottom': purchased_bottom,
-            'skin_tone': skin_tone
-        })
-
-        return jsonify({'message': 'Purchase saved successfully'}), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
