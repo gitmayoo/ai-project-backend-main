@@ -31,20 +31,8 @@ To run this project, you will need:
 ### 1. Clone the repository
 
 ```bash
-<<<<<<< HEAD
-git clone https://github.com/gitmayoo/ai-project-backend-main.git
+git clone https://github.com/your-username/your-repo.git](https://github.com/gitmayoo/ai-project-backend-main.git
 cd ai-project-backend-main
-=======
-git clone https://github.com/your-username/your-repo.git
-cd your-repo
->>>>>>> parent of ee2dbc7 (Update readme.md)
-```
-
-
-### 2. Changing into the directory
-
-```bash
-cd app/
 ```
 
 ### 3. Setting the Python path and installing the packages
