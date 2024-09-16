@@ -32,12 +32,21 @@ To run this project, you will need:
 
 ```bash
 <<<<<<< HEAD
+<<<<<<< HEAD
 git clone https://github.com/your-username/your-repo.git
 cd your-repo
 =======
 git clone https://github.com/gitmayoo/ai-project-backend-main.git
 cd ai-project-backend-main
 >>>>>>> 63c8715 (Update readme.md)
+=======
+git clone https://github.com/gitmayoo/ai-project-backend-main.git
+cd ai-project-backend-main
+=======
+git clone https://github.com/your-username/your-repo.git
+cd your-repo
+>>>>>>> parent of ee2dbc7 (Update readme.md)
+>>>>>>> f3fa33f (Revert "Update readme.md")
 ```
 
 
