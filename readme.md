@@ -45,5 +45,5 @@ pip install -r requirements.txt
 ### 4. Setting up the server
 
 ```bash
-python run.py
+python app\run.py
 ```
