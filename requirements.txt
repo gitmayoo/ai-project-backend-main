@@ -1,0 +1,10 @@
+flask
+firebase-admin
+bcrypt
+scikit-learn
+colorgram.py
+opencv-python
+mediapipe
+torch
+pandas
+flask-cors

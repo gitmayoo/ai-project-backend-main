@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "fashion-ai-production",
+  "private_key_id": "83575a74214fa9e937e9d31fcd7978414bafec03",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCw28EfRE7Pc/At\n6eMDD8lDndI/eQ6TjgyRRbUIrea9XVgg6uPGqzms+SPg5yQdZXUF21vnAw9KMXuZ\ndITbi3sg35BElJG2cj5knOt34AEx8y/bB193OdbHgHnejqD1HF1R28EgDn/Or0fX\nkxHvSFpBenOYh69OOQG9F1QW33SqanctDIY3htb42b6yvFWYmbHpME1zVpZbwsi6\nDPRjGSYzc2r2bwhPKuD7wQaAYRtvM/+945UCM3hN/F+Zxvsg1qIXM0o/b8WTeo+S\nOh5XsVcpZd+5f0ll7S4VK8J6y2sVdqpSkYQLiY4kiTTZIEUEcKBgBB/AaWjhnZGO\nTa2ri4wvAgMBAAECggEAEf5scdhwJkY2+mI7URKYQ74OZ/En96udAWN0uEstLeNj\nNdzVdjSckR87Xxn/6tJplhd2jGnwx80stJ+4wWI5vE39WSTpMFquQ2v9vxFg6GqZ\nhLDa2IAKJ1Ed1R7GJzoOupHfs88V13sDlbN7wHsoMlTu5ubDLMkQXA3quyBat9h4\nLqnqFWgLySKG+STso4qRTCKOMCOk/gs/L+6cXTQK2e/5glmV29HgKktw9tRa8fNI\nwzbZqBQFinkCF0ElLzI+PuqRw1NS7aBuj5RO4AMLTbFMqn4rD9MqlQntep39Jq9J\nABTyOCG4r67VfWVQ3Pwd68qGiJlhUTnF10iy2FhFxQKBgQDdMah2KWfFJdDY/pJ1\n5pFqHohQEVWN8kQM6T5N3L3WKhZYUZvD9tA2YJvSjSKIY790N/zYBpVZKpSd4iC2\nvj0eMZl04yt5OOK7tUU8hHTjdXvtBQqrKdx5JkalBDGANsSvwQs3XvrLR5CQuuWw\nTmTqEFcSSnOQ/JuOqUoDVPbINQKBgQDMsCFC/0O79rCqVbNpzCHBEXcpCpN/iGYb\nuLrG6QmT4Nb5OlM3paF/B4615QbSvYISClWpTx9jIg2h56USqL2WgvGUr0AiuYNW\na0XPfiwq4X7a/gK46xDdKVXoT/3bkEKcqeF8GyBN5tZpyjTJT6h00n2HRyL6VEsx\nV4VQhZh3UwKBgCJmJpy5s7mlN+WHMZ/ES7kFJo3NJFD+7DZVz6qsOZmk0fTKPD8t\nkxPh0lncORKc8JlSW6/81h0X0iT7lbrVuwuHCyZybcBcaGZoumu+7a6yBqPFtPMJ\nf5AXs8TV8hzOZ6gtjWD/FGGor4LSjgXtKyR7hg8CJRbXMhntmeUKwZZBAoGBAK3c\nkXQqBOu8n9UfVHTyGl23KyMmQ6EZR7oWUDgyq5r7aT5rJ1JmEuYmkja4ofIRXFFc\ni+RzO7LlsvSqIVHXGKqm8PKdZXnZX9Dg73xOrM+DmFAFYGSX7kwdF0Zr47JDOAGA\nXvIezHK/N7LGOc4hJnKMdGmaqAA/51qy/58kyxvXAoGAH0Mf6enRy5YQPVAR0KCz\nkArB9dhDZlWfpe0tTxLjFsh4Sdk2tVKcyctKtSqBIfrjq6O/axS/5io/VEEkUuwZ\nvdexqlaJXiznUl7fBIPGI+LHjvT8fn48KJWnyEdpXEEM0MJORiyAdb5Sythu33lF\nZuDaPnsr3AGwsuSOITNb8Y0=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-4czfh@fashion-ai-production.iam.gserviceaccount.com",
+  "client_id": "100986889336278241794",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-4czfh%40fashion-ai-production.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
